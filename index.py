@@ -31,10 +31,18 @@ app.add_middleware(
 @app.on_event('startup')
 @repeat_at(cron='* * * * *')
 async def hi():
-    print(datetime.datetime.now())
+    with open('time.txt', 'a') as file:
+        tempo = str(datetime.datetime.now())
+        file.write(tempo)
+        print(tempo)
 
 @app.get('/epa')
 async def read_root():
     return JSONResponse(content=jsonable_encoder(get_epa()))
 
+
+@app.get('/tempos')
+async def read_tempos():
+    with open('time.txt', 'r') as file:
+        return file.read()
 
