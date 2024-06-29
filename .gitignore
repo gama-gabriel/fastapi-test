@@ -1,2 +1,4 @@
 #environment 
 /env
+.vercel
+/__pycache__

@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )   
 
-@app.get('/')
+@app.get('/epa')
 async def read_root():
     return JSONResponse(content=jsonable_encoder(get_epa()))
 
