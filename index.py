@@ -28,6 +28,8 @@ app.add_middleware(
     allow_headers=["*"],
 )   
 
+times = []
+
 @app.on_event('startup')
 @repeat_at(cron='* * * * *')
 async def hi():
@@ -43,10 +45,8 @@ async def read_root():
 
 @app.get('/tempos')
 async def read_tempos():
-    with open('time.txt', 'a') as file:
-        tempo = str(datetime.datetime.now())
-        file.write(tempo)
-        print(tempo)
-    with open('time.txt', 'r') as file:
-        return file.read()
+    tempo = str(datetime.datetime.now())
+    times.append(tempo)
+    print(tempo)
+    return times
 
