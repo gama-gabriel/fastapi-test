@@ -43,6 +43,10 @@ async def read_root():
 
 @app.get('/tempos')
 async def read_tempos():
+    with open('time.txt', 'a') as file:
+        tempo = str(datetime.datetime.now())
+        file.write(tempo)
+        print(tempo)
     with open('time.txt', 'r') as file:
         return file.read()
 
