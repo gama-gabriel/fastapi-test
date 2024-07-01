@@ -3,22 +3,16 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.background import BackgroundScheduler
 from contextlib import asynccontextmanager
-from fastapi_utilities import repeat_at
 import datetime
+from dotenv import load_dotenv
+import os
 
 def check_time():
     print(datetime.datetime.now())
 
-# @asynccontextmanager
-# async def lifespan(app:FastAPI):
-#     scheduler = BackgroundScheduler()
-#     scheduler.add_job(check_time,"cron", second = '*/5')
-#     scheduler.start()
-#     yield
+load_dotenv()
 
-# app = FastAPI(lifespan=lifespan)
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -28,25 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 )   
 
-times = []
-
-@app.on_event('startup')
-@repeat_at(cron='* * * * *')
-async def hi():
-    with open('time.txt', 'a') as file:
-        tempo = str(datetime.datetime.now())
-        file.write(tempo)
-        print(tempo)
 
 @app.get('/epa')
-async def read_root():
+async def read_epa():
+    print(os.environ.get("QSTASH_URL"))
     return JSONResponse(content=jsonable_encoder(get_epa()))
-
-
-@app.get('/tempos')
-async def read_tempos():
-    tempo = str(datetime.datetime.now())
-    times.append(tempo)
-    print(tempo)
-    return times
 

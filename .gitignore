@@ -1,4 +1,8 @@
-#environment 
+#python environment
 /env
-.vercel
 /__pycache__
+
+.vercel
+
+#environment variables
+.env
