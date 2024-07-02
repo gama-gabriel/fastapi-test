@@ -1,17 +1,25 @@
 from db import get_epa
+import datetime
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-import datetime
+
+
 from dotenv import load_dotenv
 import os
 
-def check_time():
-    print(datetime.datetime.now())
+from upstash_qstash import Client
 
 load_dotenv()
+
+client = Client(os.environ.get("QSTASH_TOKEN"))
+schedules = client.schedules()
+res = schedules.create({
+    "destination": "https://fastapi-test-inky.vercel.app/tempo",
+    "cron": "* 21 * * *"
+})
 
 app = FastAPI()
 app.add_middleware(
@@ -25,6 +33,10 @@ app.add_middleware(
 
 @app.get('/epa')
 async def read_epa():
-    print(os.environ.get("QSTASH_URL"))
     return JSONResponse(content=jsonable_encoder(get_epa()))
+
+@app.get('/tempo')
+async def return_time():
+    print((datetime.datetime.now()))
+    return str(datetime.datetime.now())
 
