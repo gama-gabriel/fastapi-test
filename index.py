@@ -18,7 +18,7 @@ client = Client(os.environ.get("QSTASH_TOKEN"))
 schedules = client.schedules()
 res = schedules.create({
     "destination": "https://fastapi-test-inky.vercel.app/tempo",
-    "cron": "* 21 * * *"
+    "cron": "* 20 * * *"
 })
 
 app = FastAPI()
