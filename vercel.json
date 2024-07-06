@@ -12,7 +12,7 @@
     }
   ]
 	"functions": {
-        ".": {
+        "/(.*)": {
             "excludeFiles": "{.next,*.cache,node_modules,public,app}/**"
         }
     }
