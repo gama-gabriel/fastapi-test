@@ -1,15 +1,12 @@
 from db import get_epa
+import load
 import datetime
-
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-
-
 from dotenv import load_dotenv
 import os
-
 from upstash_qstash import Client
 
 load_dotenv()
@@ -41,3 +38,19 @@ async def return_time():
     print((datetime.datetime.now()))
     return str(datetime.datetime.now())
 
+
+@app.post('/request')
+async def return_time():
+    return load.request_opt()
+
+@app.post('/fsspec')
+async def return_time():
+    return load.fsspec_opt()
+
+@app.post('/pandas')
+async def return_time():
+    return load.pandas_opt()
+
+@app.post('/nfl')
+async def return_time():
+    return load.nfl_opt()
