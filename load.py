@@ -1,49 +1,49 @@
-import polars as pl
-import pandas as pd
-import nfl_data_py as nfl
-import fsspec
-import requests
-import time
+from polars import read_parquet as pl_read_parquet
+from pandas import read_parquet
+from nfl_data_py import import_pbp_data
+from fsspec import open as fs_open
+from requests import get
+from time import perf_counter
 
 def requests_opt():
     url = 'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2023.parquet'
 
-    start = time.perf_counter()
+    start = perf_counter()
 
-    pbp = requests.get(url)
+    pbp = get(url)
     pbp.raise_for_status()
-    pbp = pl.read_parquet(pbp.content)
+    pbp = pl_read_parquet(pbp.content)
     
-    end = time.perf_counter()
+    end = perf_counter()
     return (end - start)
 
 def fsspec_opt():
     url = 'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2023.parquet'
 
-    start = time.perf_counter()
+    start = perf_counter()
 
-    with fsspec.open(url) as file:
+    with fs_open(url) as file:
         pbp = pl.read_parquet(file)
     
-    end = time.perf_counter()
+    end = perf_counter()
     return (end - start)
     
 def pandas_opt():
     url = 'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2023.parquet'
 
-    start = time.perf_counter()
+    start = perf_counter()
 
-    pbp = pandas.read_parquet(url)
+    pbp = read_parquet(url)
     
-    end = time.perf_counter()
+    end = perf_counter()
     return (end - start)
 
 def nfl_opt():
 
-    start = time.perf_counter()
+    start = perf_counter()
 
-    pbp = nfl.import_pbp_data([2023], downcast=False)
+    pbp = import_pbp_data([2023], downcast=False)
     
-    end = time.perf_counter()
+    end = perf_counter()
     return (end - start)
 
