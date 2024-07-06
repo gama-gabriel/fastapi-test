@@ -31,6 +31,7 @@ app.add_middleware(
 
 @app.get('/epa')
 async def read_epa():
+    print('oi')
     return JSONResponse(content=jsonable_encoder(get_epa()))
 
 @app.get('/tempo')
