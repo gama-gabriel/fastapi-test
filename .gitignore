@@ -1,6 +1,6 @@
 #python environment
 /env
-/__pycache__
+api/__pycache__
 
 .vercel
 
