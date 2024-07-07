@@ -11,13 +11,13 @@ from upstash_qstash import Client
 
 load_dotenv()
 
-client = Client(os.environ.get("QSTASH_TOKEN"))
-schedules = client.schedules()
-res = schedules.create({
-    "destination": "https://fastapi-test-inky.vercel.app/tempo",
-    "cron": "* 1 * * *",
-    "method": "GET"
-})
+#client = Client(os.environ.get("QSTASH_TOKEN"))
+#schedules = client.schedules()
+#res = schedules.create({
+#    "destination": "https://fastapi-test-inky.vercel.app/tempo",
+#    "cron": "* 1 * * *",
+#    "method": "GET"
+#})
 
 app = FastAPI()
 app.add_middleware(
