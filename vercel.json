@@ -1,21 +1,14 @@
-
 {
-  "functions": {
-    "api/**": {
-      "runtime": "@vercel/python",
-      "excludeFiles": [
-        ".next/**",
-        "*.cache/**",
-        "node_modules/**",
-        "public/**"
-      ]
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    }
-  ]
+	"functions": {
+		"api/**": {
+			"runtime": "@vercel/python",
+			"excludeFiles": "{ .next,*.cache,node_modules,public }/**"
+		}
+	},
+	"rewrites": [
+		{
+			"source": "/(.*)",
+			"destination": "api/index.py"
+		}
+	]
 }
-
