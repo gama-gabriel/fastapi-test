@@ -39,9 +39,9 @@ async def return_time():
     return str(datetime.datetime.now())
 
 
-@app.post('/request')
+@app.post('/requests')
 async def return_time():
-    return load.request_opt()
+    return load.requests_opt()
 
 @app.post('/fsspec')
 async def return_time():

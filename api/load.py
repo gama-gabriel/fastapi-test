@@ -12,6 +12,7 @@ def requests_opt():
     pbp.raise_for_status()
     pbp = pl_read_parquet(pbp.content)
     
+    print(pbp.shape)
     end = perf_counter()
     return (end - start)
 
@@ -24,4 +25,5 @@ def fsspec_opt():
         pbp = pl_read_parquet(file)
     
     end = perf_counter()
+    print(pbp.shape)
     return (end - start)
