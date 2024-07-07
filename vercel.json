@@ -1,7 +1,7 @@
 {
 	"functions": {
 		"api/**": {
-			"excludeFiles": "{polars,pandas,numpy,sqlalchemy,numpy.libs}/**"
+			"includeFiles": "{polars,pandas,numpy,sqlalchemy,numpy.libs}/**"
 		}
 	},
 	"rewrites": [
