@@ -31,7 +31,6 @@ app.add_middleware(
 
 @app.get('/epa')
 async def read_epa():
-    print('oi')
     return JSONResponse(content=jsonable_encoder(get_epa()))
 
 @app.get('/tempo')
@@ -47,11 +46,3 @@ async def return_time():
 @app.post('/fsspec')
 async def return_time():
     return load.fsspec_opt()
-
-@app.post('/pandas')
-async def return_time():
-    return load.pandas_opt()
-
-@app.post('/nfl')
-async def return_time():
-    return load.nfl_opt()
