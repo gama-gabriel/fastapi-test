@@ -21,7 +21,7 @@ def fsspec_opt():
     start = perf_counter()
 
     with fs_open(url) as file:
-        pbp = pl.read_parquet(file)
+        pbp = pl_read_parquet(file)
     
     end = perf_counter()
     return (end - start)
