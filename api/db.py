@@ -5,13 +5,13 @@ def get_epa(down=[1,2,3,4]):
     start = time.perf_counter()
 
     d = (
-    pl.scan_parquet('desc.parquet')
+    pl.scan_parquet('api/desc.parquet')
     .select(pl.col('team_abbr').alias('Team'), pl.col('team_name'), pl.col('team_color'), pl.col('team_logo_espn'))
     )
     desc = d.collect()
 
     q = (
-    pl.scan_parquet('raw.parquet')
+    pl.scan_parquet('api/raw.parquet')
     .filter(((pl.col('pass') == 1) & (pl.col('week') <= 17)) )
     .group_by(pl.col('posteam').alias("Team"))
     .agg(pl.col('epa').mean().alias("Offensive EPA"))
