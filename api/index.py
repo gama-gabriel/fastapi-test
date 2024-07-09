@@ -1,5 +1,6 @@
 from api.db import get_epa
 import api.load as load
+import api.download as dw
 import datetime
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -37,6 +38,14 @@ async def read_epa():
 async def return_time():
     print((datetime.datetime.now()))
     return str(datetime.datetime.now())
+
+@app.get('/fsspec')
+async def download_time():
+    return dw.open_opt()
+
+@app.get('/requests')
+async def download_time_r():
+    return dw.get_opt()
 
 @app.post('/requests')
 async def return_time():
