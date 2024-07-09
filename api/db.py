@@ -1,7 +1,7 @@
 import time
 import polars as pl
 
-def get_epa(down=[1,2,3,4], year: int):
+def get_epa(year: int, down=[1,2,3,4]):
     start = time.perf_counter()
 
     d = (
