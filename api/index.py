@@ -31,18 +31,17 @@ app.add_middleware(
 
 @app.get('/epa')
 async def read_epa():
-    return JSONResponse(content=jsonable_encoder(get_epa()))
+    return JSONResponse(content=jsonable_encoder(get_epa(year=2022)))
 
 @app.get('/tempo')
 async def return_time():
     print((datetime.datetime.now()))
     return str(datetime.datetime.now())
 
-
 @app.post('/requests')
 async def return_time():
-    return load.requests_opt()
+    return load.requests_opt(2022)
 
 @app.post('/fsspec')
 async def return_time():
-    return load.fsspec_opt()
+    return load.fsspec_opt(2022)

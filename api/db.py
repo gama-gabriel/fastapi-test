@@ -1,7 +1,7 @@
 import time
 import polars as pl
 
-def get_epa(down=[1,2,3,4]):
+def get_epa(down=[1,2,3,4], year: int):
     start = time.perf_counter()
 
     d = (
@@ -11,8 +11,8 @@ def get_epa(down=[1,2,3,4]):
     desc = d.collect()
 
     q = (
-    pl.scan_parquet('api/raw.parquet')
-    .filter(((pl.col('pass') == 1) & (pl.col('week') <= 17)) )
+    pl.scan_parquet(f'api/pbp_{year}.parquet')
+    .filter(((pl.col('pass') == 1) & (pl.col('week') <= 18)) )
     .group_by(pl.col('posteam').alias("Team"))
     .agg(pl.col('epa').mean().alias("Offensive EPA"))
     .sort('Offensive EPA', descending = True)
