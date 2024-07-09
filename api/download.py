@@ -16,6 +16,12 @@ def open_opt():
     start = perf_counter()
 
     content = fs_open('https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2023.parquet')
+    q = (
+        pl.scan_parquet(content)
+        .filter(((pl.col('pass') == 1) & (pl.col('week') <= 18)))
+    )
+    df = q.collect()
+    print(df.shape)
 
     end = perf_counter()
     return (end - start)
