@@ -28,7 +28,7 @@ def requests_opt(year: int):
         pbp = raw
 
     if not (path.exists(f'api/pbp_{year}.parquet')):
-        pbp.write_parquet(f'api/pbp_{year}.parquet')
+#        pbp.write_parquet(f'api/pbp_{year}.parquet')
         end = perf_counter()
         print(f'{year} data created at {datetime.now()}')
         return (end - start)
@@ -36,7 +36,7 @@ def requests_opt(year: int):
     prev_pbp = pl.read_parquet(f'api/pbp_{year}.parquet')
 
     if pbp.shape != prev_pbp.shape:
-        pbp.write_parquet(f'api/pbp_{year}.parquet')
+#        pbp.write_parquet(f'api/pbp_{year}.parquet')
         end = perf_counter()
         print(f'{year} data updated at {datetime.now()}')
         return (end - start)
@@ -78,13 +78,13 @@ def fsspec_opt(year: int):
     prev_pbp = pl.read_parquet(f'api/pbp_{year}.parquet')
 
     if pbp.shape != prev_pbp.shape:
-        pbp.write_parquet(f'api/pbp_{year}.parquet')
+#        pbp.write_parquet(f'api/pbp_{year}.parquet')
         end = perf_counter()
         print(f'{year} data updated at {datetime.now()}')
         return (end - start)
 
     if not (pbp.equals(prev_pbp)):
-        pbp.write_parquet(f'api/pbp_{year}.parquet')
+#        pbp.write_parquet(f'api/pbp_{year}.parquet')
         print(f'{year} data updated at {datetime.now()}')
     else:
         print(f'{year} data not updated')
