@@ -29,7 +29,7 @@ def requests_opt(year: int):
 
     if not (path.exists(f'api/pbp_{year}.parquet')):
         pbp.write_parquet(f'api/pbp_{year}.parquet')
-        end = perf_counter
+        end = perf_counter()
         print(f'{year} data created at {datetime.now()}')
         return (end - start)
 
@@ -91,4 +91,4 @@ def fsspec_opt(year: int):
         
     end = perf_counter()
     return (end - start)
-requests_opt(2022)
+print(requests_opt(2023))
