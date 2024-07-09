@@ -7,7 +7,7 @@ def get_opt():
     start = perf_counter()
 
     response = get('https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2023.parquet')
-    response.raise_for_error()
+    response.raise_for_status()
 
     end = perf_counter()
     return (end - start)
