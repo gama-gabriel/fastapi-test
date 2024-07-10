@@ -91,4 +91,3 @@ def fsspec_opt(year: int):
         
     end = perf_counter()
     return (end - start)
-print(requests_opt(2023))
