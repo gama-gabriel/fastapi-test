@@ -10,7 +10,7 @@ def get_opt():
     response.raise_for_status()
 
     ws = perf_counter()
-    with open('tmp/pbp.parquet', 'wb') as f:
+    with open('/tmp/pbp_2022.parquet', 'wb') as f:
         f.write(response.content)
     we = perf_counter()
     print(f'write time: {we - ws}')
