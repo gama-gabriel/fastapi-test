@@ -17,7 +17,7 @@ def get_opt():
 
     qs = perf_counter()
     q = (
-        pl.scan_parquet('tmp/pbp_2022.parquet')
+        pl.scan_parquet('/tmp/pbp_2022.parquet')
         .filter(((pl.col('pass') == 1) & (pl.col('week') <= 18)) )
         .group_by(pl.col('posteam').alias("Team"))
         .agg(pl.col('epa').mean().alias("Offensive EPA"))
