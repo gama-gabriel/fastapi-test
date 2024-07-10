@@ -27,15 +27,15 @@ def get_opt():
     pbp = pl.scan_parquet('/tmp/pbp_2022.parquet')
     part = pl.scan_parquet('/tmp/part_2022.parquet')
     ftn = pl.scan_parquet('/tmp/ftn_2022.parquet')
-    ftn = ftn.with_column(pl.col('nflverse_play_id').alias('play_id'))
+    ftn = ftn.with_columns(pl.col('nflverse_play_id').alias('play_id'))
 
     qs = perf_counter()
     q = (
         pbp
-        .with_column(pl.col('game_id').alias('nflverse_game_id'))
+        .cast({'play_id': pl.Int32})
+        .with_columns(pl.col('game_id').alias('nflverse_game_id'))
         .join(part, on=['nflverse_game_id', 'play_id'], how='inner')
         .join(ftn, on=['nflverse_game_id', 'play_id'], how='inner')
-        .cast({'play_id': pl.Int32})
         .filter(((pl.col('pass') == 1) & (pl.col('week') <= 18)) )
         .group_by(pl.col('posteam').alias("Team"))
         .agg(pl.col('epa').mean().alias("Offensive EPA"))
