@@ -6,7 +6,8 @@ from time import perf_counter
 def get_opt():
     start = perf_counter()
 
-    response = get('https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2022.parquet')
+    response = get('https://utfs.io/f/915b30e3-15b9-4e2d-b0b6-ced13c566bf3-x1kd0f.parquet')
+
     response.raise_for_status()
 
     ws = perf_counter()
