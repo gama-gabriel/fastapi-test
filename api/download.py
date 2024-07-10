@@ -31,7 +31,7 @@ def get_opt():
 
     qs = perf_counter()
     q = (
-        pbp.
+        pbp
         .with_column(pl.col('game_id').alias('nflverse_game_id'))
         .join(part, on=['nflverse_game_id', 'play_id'], how='inner')
         .join(ftn, on=['nflverse_game_id', 'play_id'], how='inner')
