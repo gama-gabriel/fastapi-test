@@ -1,8 +1,22 @@
 import time
 import polars as pl
+from requests import get
+import os.path
+
+def write(url: str, path: str):
+    response = get(url)
+    response.raise_for_status()
+
+    path = os.path.join('/tmp', path)
+
+    with open(path, 'wb') as file:
+        file.write(response.content)
 
 def get_epa(year: int, down=[1,2,3,4]):
     start = time.perf_counter()
+
+    pbp_url = f'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{year}.parquet'
+    write(pbp_url, f'pbp_{year}.parquet')
 
     desc = (
         pl.scan_parquet('api/desc.parquet')
