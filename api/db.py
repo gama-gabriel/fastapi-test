@@ -29,7 +29,7 @@ def get_epa(year: int, down=[1,2,3,4]):
 
     off_epa = (
         pl.scan_parquet(f'/tmp/pbp_{year}.parquet')
-        .filter(((pl.col('pass') == 1) || (pl.col('rush') == 1)))
+        .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
         .filter((pl.col('week') <= 18))
         .group_by(pl.col('posteam').alias('Team'))
         .agg(pl.col('epa').mean().alias('Offensive EPA'))
@@ -37,7 +37,7 @@ def get_epa(year: int, down=[1,2,3,4]):
 
     def_epa = (
         pl.scan_parquet(f'/tmp/pbp_{year}.parquet')
-        .filter(((pl.col('pass') == 1) || (pl.col('rush') == 1)))
+        .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
         .filter((pl.col('week') <= 18))
         .group_by(pl.col('defteam').alias('Team'))
         .agg(pl.col('epa').mean().alias('Defensive EPA'))
