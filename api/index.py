@@ -31,7 +31,7 @@ app.add_middleware(
 
 @app.get('/epa')
 async def read_epa():
-    return JSONResponse(content=jsonable_encoder(get_epa(year=2022)))
+    return JSONResponse(content=jsonable_encoder(get_epa(year=2023)))
 
 @app.get('/tempo')
 async def return_time():
