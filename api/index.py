@@ -1,5 +1,4 @@
 from api.db import get_epa
-import api.load as load
 import api.download as dw
 import datetime
 from fastapi import FastAPI
@@ -42,11 +41,3 @@ async def return_time():
 @app.get('/requests')
 async def download_time_r():
     return dw.get_opt()
-
-@app.post('/requests')
-async def return_time():
-    return load.requests_opt(2022)
-
-@app.post('/fsspec')
-async def return_time():
-    return load.fsspec_opt(2022)
