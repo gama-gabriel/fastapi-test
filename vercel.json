@@ -1,7 +1,7 @@
 {
 	"functions": {
 		"api/**": {
-			"excludeFiles": "{node_modules}/**"
+			"excludeFiles": "/{node_modules,.vercel}/**"
 		}
 	},
 	"rewrites": [
