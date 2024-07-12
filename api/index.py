@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 from upstash_qstash import Client
 import subprocess
-from pydantic import baseModel
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )   
 
-class Command(baseModel):
+class Command(BaseModel):
     command: str
 
 @app.post("/execute")
