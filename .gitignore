@@ -6,3 +6,6 @@ api/__pycache__
 
 #environment variables
 .env
+
+#load static files
+api/load.py
