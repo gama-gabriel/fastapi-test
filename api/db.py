@@ -22,10 +22,10 @@ def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
         path = os.path.join('/tmp', f'pbp_{year}.parquet')
 
         write_end = perf_counter()
+        print(f'write time: {write_end - write_start}')
     else:
         path = f'api/data/pbp_{year}.parquet'
 
-    print(f'write time: {write_end - write_start}')
 
     start = perf_counter()
     desc = (
