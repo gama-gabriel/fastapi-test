@@ -12,13 +12,19 @@ def write(url: str, path: str):
     with open(path, 'wb') as file:
         file.write(response.content)
 
-def get_epa(year: int, down=[1,2,3,4]):
-    write_start = perf_counter()
+def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
 
-    pbp_url = f'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{year}.parquet'
-    write(pbp_url, f'pbp_{year}.parquet')
+    if year == 2024:
+        write_start = perf_counter()
 
-    write_end = perf_counter()
+        pbp_url = f'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{year}.parquet'
+        write(pbp_url, f'pbp_{year}.parquet')
+        path = os.path.join('/tmp', f'pbp_{year}.parquet')
+
+        write_end = perf_counter()
+    else:
+        path = f'api/data/pbp_{year}.parquet'
+
     print(f'write time: {write_end - write_start}')
 
     start = perf_counter()
@@ -27,8 +33,10 @@ def get_epa(year: int, down=[1,2,3,4]):
         .select(pl.col('team_abbr').alias('Team'), pl.col('team_name'), pl.col('team_color'), pl.col('team_logo_espn'))
     )
 
+    pbp = pl.scan_parquet(path)
+
     off_epa = (
-        pl.scan_parquet(f'/tmp/pbp_{year}.parquet')
+        pbp
         .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
         .filter((pl.col('week') <= 18))
         .group_by(pl.col('posteam').alias('Team'))
@@ -36,7 +44,7 @@ def get_epa(year: int, down=[1,2,3,4]):
     )
 
     def_epa = (
-        pl.scan_parquet(f'/tmp/pbp_{year}.parquet')
+        pbp
         .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
         .filter((pl.col('week') <= 18))
         .group_by(pl.col('defteam').alias('Team'))
@@ -63,3 +71,5 @@ def get_epa(year: int, down=[1,2,3,4]):
     end = perf_counter()
     print(f'query time: {end - start}')
     return epa_json
+
+#def get_side_epa(side: str,
