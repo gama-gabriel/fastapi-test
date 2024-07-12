@@ -1,5 +1,5 @@
 {
-	"buildCommand": "pip install requirements.txt -r && ls -la / && du -sh *",
+	"buildCommand": "ls -la / && du -sh *",
 	"functions": {
 		"api/**": {
 			"includeFiles": "{polars,pandas,numpy,sqlalchemy,numpy.libs}/**",
