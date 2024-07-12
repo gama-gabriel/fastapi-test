@@ -30,7 +30,7 @@ app.add_middleware(
 )   
 
 @app.post("/execute")
-async def execute_command(cmd: string):
+async def execute_command(cmd: str):
     try:
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         return {
