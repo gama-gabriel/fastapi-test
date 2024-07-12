@@ -14,7 +14,7 @@ def write(url: str, path: str):
 
 def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
 
-    if year == 2024:
+    if year <= 2024:
         write_start = perf_counter()
 
         pbp_url = f'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{year}.parquet'
