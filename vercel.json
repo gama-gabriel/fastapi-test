@@ -1,5 +1,5 @@
 {
-	"buildCommand": "du -sh *",
+	"buildCommand": "vercel build && ls -la / && du -sh *",
 	"functions": {
 		"api/**": {
 			"includeFiles": "{polars,pandas,numpy,sqlalchemy,numpy.libs}/**",
