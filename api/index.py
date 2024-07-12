@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import os
 from upstash_qstash import Client
 import subprocess
+from pydantic import baseModel
 
 load_dotenv()
 
@@ -29,10 +30,13 @@ app.add_middleware(
     allow_headers=["*"],
 )   
 
+class Command(baseModel):
+    command: str
+
 @app.post("/execute")
-async def execute_command(cmd: str):
+async def execute_command(cmd: Command):
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        result = subprocess.run(cmd.command, shell=True, capture_output=True, text=True)
         return {
             "stdout": result.stdout,
             "stderr": result.stderr,
