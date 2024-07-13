@@ -1,4 +1,3 @@
-import fsspec
 from requests import get
 import polars as pl
 from time import perf_counter
