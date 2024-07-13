@@ -10,6 +10,7 @@
 		{
 	      "src": "app/index.py",
 		  "use": "@vercel/python"
+		}
 	],
 	"rewrites": [
 		{
