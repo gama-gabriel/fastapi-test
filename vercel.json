@@ -4,9 +4,12 @@
 	"outputDirectory": ".",
 	"builds": [
 		{
-	      "src": "app/index.py",
+	      "src": "build.sh",
 		  "use": "@vercel/static-build"
-	    }
+	    },
+		{
+	      "src": "app/index.py",
+		  "use": "@vercel/python"
 	],
 	"rewrites": [
 		{
