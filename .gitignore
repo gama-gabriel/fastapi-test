@@ -1,6 +1,7 @@
 #python environment
 /env
 api/__pycache__
+app/__pycache__
 
 .vercel
 
@@ -9,3 +10,4 @@ api/__pycache__
 
 #load static files
 api/load.py
+app/load.py

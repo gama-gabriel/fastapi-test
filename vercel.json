@@ -1,14 +1,8 @@
 {
-	"functions": {
-		"api/**": {
-			"includeFiles": "{polars,pandas,numpy,sqlalchemy,numpy.libs}/**",
-			"excludeFiles": "/{node_modules,.vercel}/**"
-		}
-	},
 	"rewrites": [
 		{
 			"source": "/(.*)",
-			"destination": "api/index.py"
+			"destination": "app/index.py"
 		}
 	]
 }

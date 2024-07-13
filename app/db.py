@@ -24,12 +24,12 @@ def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
         write_end = perf_counter()
         print(f'write time: {write_end - write_start}')
     else:
-        path = f'api/data/pbp_{year}.parquet'
+        path = f'app/data/pbp_{year}.parquet'
 
 
     start = perf_counter()
     desc = (
-        pl.scan_parquet('api/desc.parquet')
+        pl.scan_parquet('app/desc.parquet')
         .select(pl.col('team_abbr').alias('Team'), pl.col('team_name'), pl.col('team_color'), pl.col('team_logo_espn'))
     )
 
