@@ -1,4 +1,4 @@
-from api.db import get_epa
+from app.db import get_epa
 import api.download as dw
 import datetime
 from fastapi import FastAPI
