@@ -53,7 +53,3 @@ async def read_epa():
 async def return_time():
     print((datetime.datetime.now()))
     return str(datetime.datetime.now())
-
-@app.get('/requests')
-async def download_time_r():
-    return dw.get_opt()

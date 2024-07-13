@@ -48,5 +48,3 @@ def get_opt():
 
     end = perf_counter()
     return (end - start)
-
-print(get_opt())
