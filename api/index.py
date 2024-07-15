@@ -34,6 +34,13 @@ app.add_middleware(
 class Command(BaseModel):
     command: str
 
+def parse_list(list: str, param: str):
+    try:
+        list = [int(i) for i in list.split(',')]
+        return list
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f'{param} could not be parsed to a list. Expected a comma-separated list of integers.')
+
 @app.post("/execute")
 async def execute_command(cmd: Command):
     try:
@@ -56,6 +63,13 @@ async def read_epa(
      wp_offset: float = 0, 
      vegas_wp_offset: float = 0
     ):
+    if down != "all":
+        down = parse_int(down, "down")
+    if quarter != "all":
+        quarter = parse_int(quarter, "quarter")
+    if weeks != "all":
+        weeks = parse_int(weeks, "weeks")
+
     return JSONResponse(content=jsonable_encoder(get_epa(year, down, quarter, weeks, include_playoffs, wp_offset, vegas_wp_offset)))
 
 @app.get('/tempo')

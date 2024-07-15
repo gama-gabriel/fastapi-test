@@ -12,13 +12,6 @@ def write(url: str, path: str):
     with open(path, 'wb') as file:
         file.write(response.content)
 
-def parse_list(list: str, param: str):
-    try:
-        list = [int(i) for i in list.split(',')]
-        return list
-    except ValueError:
-        raise HTTPException(status_code=400, detail=f'{param} could not be parsed to a list. Expected a comma-separated list of integers.')
-
 def get_epa(
      year: int, 
      down: str = "all", 
@@ -56,7 +49,6 @@ def get_epa(
         if not include_playoffs:
             pbp = pbp.filter((pl.col('season_type') == 'REG'))
     else:
-        weeks = parse_list(weeks, "weeks")
         start, end = weeks
         if include_playoffs:
             pbp = pbp.filter(((pl.col('week') >= start) & (pl.col('week') <= end)) | (pl.col('season_type') == 'POST'))
@@ -65,12 +57,10 @@ def get_epa(
 
     #filtering downs
     if down != "all":
-        down = parse_list(down, "down")
         pbp = pbp.filter(pl.col('down').is_in(down))
 
     #filtering quarters
     if quarter != "all":
-        quarter = parse_list(quarter, "quarter")
         pbp = pbp.filter(pl.col('qtr').is_in(quarter))
 
     #filtering win percentage
