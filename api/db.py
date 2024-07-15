@@ -2,6 +2,7 @@ from time import perf_counter
 import polars as pl
 from requests import get
 import os.path
+from typing import Union, List
 
 def write(url: str, path: str):
     response = get(url)
@@ -14,10 +15,10 @@ def write(url: str, path: str):
 
 def get_epa(
      year: int, 
-     down: str = "all", 
-     quarter: str = "all", 
-     weeks: str = "all", 
-     include_playoffs=False, 
+     down: Union[str, List[int]]= "all", 
+     quarter: Union[str, List[int]] = "all", 
+     weeks: Union[str, List[int]] = "all", 
+     include_playoffs: bool =False, 
      wp_offset: float = 0, 
      vegas_wp_offset: float = 0
 ):
