@@ -49,9 +49,9 @@ async def execute_command(cmd: Command):
 @app.get('/epa')
 async def read_epa(
      year: int, 
-     down: Union[str, List[int]] = Query("all")
-     quarter: Union[str, List[int]] = Query("all")
-     weeks: Union[str, List[int]] = Query("all")
+     down: Union[str, List[int]] = Query("all"),
+     quarter: Union[str, List[int]] = Query("all"),
+     weeks: Union[str, List[int]] = Query("all"),
      include_playoffs: bool =False, 
      wp_offset: float = 0, 
      vegas_wp_offset: float = 0
