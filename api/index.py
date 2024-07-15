@@ -1,7 +1,7 @@
 from api.db import get_epa
 import api.download as dw
 import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +10,7 @@ import os
 from upstash_qstash import Client
 import subprocess
 from pydantic import BaseModel
+from typing import List, Union
 
 load_dotenv()
 
@@ -46,8 +47,16 @@ async def execute_command(cmd: Command):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/epa')
-async def read_epa():
-    return JSONResponse(content=jsonable_encoder(get_epa(year=2023)))
+async def read_epa(
+     year: int, 
+     down: str = "all", 
+     quarter: str = "all", 
+     weeks: str = "all", 
+     include_playoffs=False, 
+     wp_offset: float = 0, 
+     vegas_wp_offset: float = 0
+    ):
+    return JSONResponse(content=jsonable_encoder(get_epa(year, down, quarter, weeks, include_playoffs, wp_offset, vegas_wp_offset)))
 
 @app.get('/tempo')
 async def return_time():

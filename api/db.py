@@ -12,7 +12,22 @@ def write(url: str, path: str):
     with open(path, 'wb') as file:
         file.write(response.content)
 
-def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
+def parse_list(list: str, param: str):
+    try:
+        list = [int(i) for i in list.split(',')]
+        return list
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f'{param} could not be parsed to a list. Expected a comma-separated list of integers.')
+
+def get_epa(
+     year: int, 
+     down: str = "all", 
+     quarter: str = "all", 
+     weeks: str = "all", 
+     include_playoffs=False, 
+     wp_offset: float = 0, 
+     vegas_wp_offset: float = 0
+):
 
     if year == 2024:
         write_start = perf_counter()
@@ -28,6 +43,7 @@ def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
 
 
     start = perf_counter()
+
     desc = (
         pl.scan_parquet('api/desc.parquet')
         .select(pl.col('team_abbr').alias('Team'), pl.col('team_name'), pl.col('team_color'), pl.col('team_logo_espn'))
@@ -35,10 +51,37 @@ def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
 
     pbp = pl.scan_parquet(path)
 
+    #filtering weeks
+    if weeks == "all":
+        if not include_playoffs:
+            pbp = pbp.filter((pl.col('season_type') == 'REG'))
+    else:
+        weeks = parse_list(weeks, "weeks")
+        start, end = weeks
+        if include_playoffs:
+            pbp = pbp.filter(((pl.col('week') >= start) & (pl.col('week') <= end)) | (pl.col('season_type') == 'POST'))
+        else:
+            pbp = pbp.filter(((pl.col('week') >= start) & (pl.col('week') <= end)))
+
+    #filtering downs
+    if down != "all":
+        down = parse_list(down, "down")
+        pbp = pbp.filter(pl.col('down').is_in(down))
+
+    #filtering quarters
+    if quarter != "all":
+        quarter = parse_list(quarter, "quarter")
+        pbp = pbp.filter(pl.col('qtr').is_in(quarter))
+
+    #filtering win percentage
+    if wp_offset > 0:
+        pbp = pbp.filter((pl.col('wp') >= wp_offset) & (pl.col('wp') <= 1 - wp_offset))
+    if vegas_wp_offset > 0:
+        pbp = pbp.filter((pl.col('vegas_wp') >= vegas_wp_offset) & (pl.col('vegas_wp') <= 1 - vegas_wp_offset))
+
     off_epa = (
         pbp
         .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
-        .filter((pl.col('week') <= 18))
         .group_by(pl.col('posteam').alias('Team'))
         .agg(pl.col('epa').mean().alias('Offensive EPA'))
     )
@@ -46,7 +89,6 @@ def get_epa(year: int, down=[1,2,3,4], quarter=[1,2,3,4,5]):
     def_epa = (
         pbp
         .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
-        .filter((pl.col('week') <= 18))
         .group_by(pl.col('defteam').alias('Team'))
         .agg(pl.col('epa').mean().alias('Defensive EPA'))
     )
