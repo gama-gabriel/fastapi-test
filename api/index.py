@@ -64,12 +64,13 @@ async def read_epa(
      vegas_wp_offset: float = 0
     ):
     if down != "all":
-        down = parse_int(down, "down")
+        down = parse_list(down, "down")
     if quarter != "all":
-        quarter = parse_int(quarter, "quarter")
+        quarter = parse_list(quarter, "quarter")
     if weeks != "all":
-        weeks = parse_int(weeks, "weeks")
+        weeks = parse_list(weeks, "weeks")
 
+    print(year, down, quarter, weeks, include_playoffs, wp_offset, vegas_wp_offset)
     return JSONResponse(content=jsonable_encoder(get_epa(year, down, quarter, weeks, include_playoffs, wp_offset, vegas_wp_offset)))
 
 @app.get('/tempo')
