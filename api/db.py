@@ -50,11 +50,11 @@ def get_epa(
         if not include_playoffs:
             pbp = pbp.filter((pl.col('season_type') == 'REG'))
     else:
-        start, end = weeks
+        week_start, week_end = weeks
         if include_playoffs:
-            pbp = pbp.filter(((pl.col('week') >= start) & (pl.col('week') <= end)) | (pl.col('season_type') == 'POST'))
+            pbp = pbp.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)) | (pl.col('season_type') == 'POST'))
         else:
-            pbp = pbp.filter(((pl.col('week') >= start) & (pl.col('week') <= end)))
+            pbp = pbp.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)))
 
     #filtering downs
     if down != "all":
