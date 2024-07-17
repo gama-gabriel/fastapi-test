@@ -3,6 +3,36 @@ import polars as pl
 from requests import get
 import os.path
 from typing import Union, List
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+from fastapi import HTTPException
+
+class Play_by_play(pl.LazyFrame):
+    def __init__(self, df: pl.LazyFrame):
+        super.__init__(df._ldf)
+
+    def filter_weeks(self, weeks: Union[str, List[int]], include_playoffs = False):
+        def validade_weeks(weeks: Union[str, List[int]]):
+            if isinstance(weeks, str):
+                raise HTTPException(status_code=400, detail="""Week parameter, when string, should be set to "all".""")
+            if isinstance(weeks, List):
+                if (len(weeks)) != 2:
+                    raise HTTPException(status_code=400, detail="Week parameter, when list, should be composed of the first and the last weeks of a range.")
+
+        if weeks == "all":
+            if not include_playoffs:
+                return self.filter((pl.col('season_type') == 'REG'))
+        else:
+            validade_weeks(weeks)
+            week_start, week_end = weeks
+            if include_playoffs:
+                return self.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)) | (pl.col('season_type') == 'POST'))
+            else:
+                return self.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)))
+    
+    def filter_quarter(self, quarters: Union[str, List[int]]):
+        
+
 
 def write(url: str, path: str):
     response = get(url)
@@ -103,6 +133,6 @@ def get_epa(
 
     end = perf_counter()
     print(f'query time: {end - start}')
-    return epa_json
+    return JSONResponse(content=jsonable_encoder(epa_json))
 
 #def get_side_epa(side: str,
