@@ -7,11 +7,13 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
 
-class Play_by_play(pl.LazyFrame):
-    def __init__(self, df: pl.LazyFrame):
-        super.__init__(df._ldf)
+#the namespace cannot be type checked by the code editor
+@pl.api.register_lazyframe_namespace("nfl")
+class Play_by_play:
+    def __init__(self, lf: pl.LazyFrame):
+        self._lf = lf
 
-    def filter_weeks(self, weeks: Union[str, List[int]], include_playoffs = False):
+    def filter_weeks(self, weeks: Union[str, List[int]], include_playoffs: bool = False):
         def validade_weeks(weeks: Union[str, List[int]]):
             if isinstance(weeks, str):
                 raise HTTPException(status_code=400, detail="""Week parameter, when string, should be set to "all".""")
@@ -19,19 +21,41 @@ class Play_by_play(pl.LazyFrame):
                 if (len(weeks)) != 2:
                     raise HTTPException(status_code=400, detail="Week parameter, when list, should be composed of the first and the last weeks of a range.")
 
+
         if weeks == "all":
             if not include_playoffs:
-                return self.filter((pl.col('season_type') == 'REG'))
+                return self._lf.filter((pl.col('season_type') == 'REG'))
         else:
             validade_weeks(weeks)
             week_start, week_end = weeks
             if include_playoffs:
-                return self.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)) | (pl.col('season_type') == 'POST'))
+                return self._lf.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)) | (pl.col('season_type') == 'POST'))
             else:
-                return self.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)))
+                return self._lf.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)))
     
-    def filter_quarter(self, quarters: Union[str, List[int]]):
+
+    def filter_quarters(self, quarters: Union[str, List[int]]):
+        if quarters != "all":
+            return self._lf.filter(pl.col('qtr').is_in(quarters))
+        return self._lf
+
         
+    def filter_downs(self, downs: Union[str, List[int]]):
+        if downs != "all":
+            return self._lf.filter(pl.col('down').is_in(downs))
+        return self._lf
+
+
+    def filter_wp(self, wp_offset: int = 0):
+        if wp_offset > 0:
+            return self._lf.filter((pl.col('wp') >= wp_offset) & (pl.col('wp') <= 1 - wp_offset))
+        return self._lf
+
+
+    def filter_vegas_wp(self, wp_offset: int = 0):
+        if wp_offset > 0:
+            return self._lf.filter((pl.col('vegas_wp') >= wp_offset) & (pl.col('vegas_wp') <= 1 - wp_offset))
+        return self._lf
 
 
 def write(url: str, path: str):
@@ -43,16 +67,16 @@ def write(url: str, path: str):
     with open(path, 'wb') as file:
         file.write(response.content)
 
+
 def get_epa(
      year: int, 
-     down: Union[str, List[int]]= "all", 
-     quarter: Union[str, List[int]] = "all", 
+     downs: Union[str, List[int]]= "all", 
+     quarters: Union[str, List[int]] = "all", 
      weeks: Union[str, List[int]] = "all", 
      include_playoffs: bool =False, 
      wp_offset: float = 0, 
      vegas_wp_offset: float = 0
 ):
-
     if year == 2024:
         write_start = perf_counter()
 
@@ -65,7 +89,6 @@ def get_epa(
     else:
         path = f'api/data/pbp_{year}.parquet'
 
-
     start = perf_counter()
 
     desc = (
@@ -74,35 +97,14 @@ def get_epa(
     )
 
     pbp = pl.scan_parquet(path)
-
-    #filtering weeks
-    if weeks == "all":
-        if not include_playoffs:
-            pbp = pbp.filter((pl.col('season_type') == 'REG'))
-    else:
-        week_start, week_end = weeks
-        if include_playoffs:
-            pbp = pbp.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)) | (pl.col('season_type') == 'POST'))
-        else:
-            pbp = pbp.filter(((pl.col('week') >= week_start) & (pl.col('week') <= week_end)))
-
-    #filtering downs
-    if down != "all":
-        pbp = pbp.filter(pl.col('down').is_in(down))
-
-    #filtering quarters
-    if quarter != "all":
-        pbp = pbp.filter(pl.col('qtr').is_in(quarter))
-
-    #filtering win percentage
-    if wp_offset > 0:
-        pbp = pbp.filter((pl.col('wp') >= wp_offset) & (pl.col('wp') <= 1 - wp_offset))
-    if vegas_wp_offset > 0:
-        pbp = pbp.filter((pl.col('vegas_wp') >= vegas_wp_offset) & (pl.col('vegas_wp') <= 1 - vegas_wp_offset))
-
     off_epa = (
         pbp
         .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
+        .nfl.filter_weeks(weeks, include_playoffs) #type: ignore (because the type is created at runtime)
+        .nfl.filter_quarters(quarters)
+        .nfl.filter_downs(downs)
+        .nfl.filter_wp(wp_offset)
+        .nfl.filter_vegas_wp(vegas_wp_offset)
         .group_by(pl.col('posteam').alias('Team'))
         .agg(pl.col('epa').mean().alias('Offensive EPA'))
     )
@@ -110,14 +112,17 @@ def get_epa(
     def_epa = (
         pbp
         .filter(((pl.col('pass') == 1) | (pl.col('rush') == 1)))
+        .nfl.filter_weeks(weeks, include_playoffs) #type: ignore (because the type is created at runtime)
+        .nfl.filter_quarters(quarters)
+        .nfl.filter_downs(downs)
+        .nfl.filter_wp(wp_offset)
+        .nfl.filter_vegas_wp(vegas_wp_offset)
         .group_by(pl.col('defteam').alias('Team'))
         .agg(pl.col('epa').mean().alias('Defensive EPA'))
     )
 
     both = off_epa.join(def_epa, on='Team', how='inner')
-
     df = both.join(desc, on='Team', how='inner')
-
     epa = df.collect()
 
     offensive_epa = epa['Offensive EPA'].to_list()
@@ -128,11 +133,11 @@ def get_epa(
 
     data_list = [{'data': {'x': x, 'y': y}, 'name': name, 'logo': logo, 'color': color} 
 		 for x, y, name, logo, color in zip(offensive_epa, defensive_epa, teams, logos, colors)]
-
     epa_json = str(data_list)
 
     end = perf_counter()
     print(f'query time: {end - start}')
     return JSONResponse(content=jsonable_encoder(epa_json))
+
 
 #def get_side_epa(side: str,
