@@ -25,6 +25,7 @@ class Play_by_play:
         if weeks == "all":
             if not include_playoffs:
                 return self._lf.filter((pl.col('season_type') == 'REG'))
+            return self._lf
         else:
             validade_weeks(weeks)
             week_start, week_end = weeks
