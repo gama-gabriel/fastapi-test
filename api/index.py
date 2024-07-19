@@ -32,6 +32,7 @@ app.add_middleware(
 class Command(BaseModel):
     command: str
 
+
 @app.post("/execute")
 async def execute_command(cmd: Command):
     try:
@@ -44,18 +45,19 @@ async def execute_command(cmd: Command):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.get('/epa')
 async def read_epa(
-     year: int,
-     down: Union[str, List[int]] = Query("all"),
-     quarter: Union[str, List[int]] = Query("all"),
-     weeks: Union[str, List[int]] = Query("all"),
-     include_playoffs: bool = False, 
-     wp_offset: float = 0,
-     vegas_wp_offset: float = 0
-    ):
+    year: int,
+    weeks: List[int] | str = Query("all"),
+    quarters: List[int] | str = Query("all"),
+    downs: List[int] | str = Query("all"),
+    include_playoffs: bool = False,
+    wp_offset: float = 0,
+    vegas_wp_offset: float = 0
+):
+    return(get_epa(year, weeks, quarters, downs, include_playoffs, wp_offset, vegas_wp_offset))
 
-    return get_epa(year, down, quarter, weeks, include_playoffs, wp_offset, vegas_wp_offset)
 
 @app.get('/tempo')
 async def return_time():
