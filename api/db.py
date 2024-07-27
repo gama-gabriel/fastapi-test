@@ -102,7 +102,7 @@ def get_epa(
      wp_offset: float = 0, 
      vegas_wp_offset: float = 0
 ):
-    if year == 2024:
+    if year <= 2024:
         write_start = perf_counter()
 
         pbp_url = f'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{year}.parquet'
